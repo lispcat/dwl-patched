@@ -11,7 +11,7 @@
 - [X] 2.6k :: [[file:shiftview.patch]]
 - [X] 2.7k :: [[file:movestack.patch]]
 - [X] 2.7k :: [[file:passthrough.patch]]
-- [ ] 2.9k :: [[file:deck.patch]]
+- [X] 2.9k :: [[file:deck.patch]]
 - [ ] 3.0k :: [[file:rotatetags.patch]]
 - [ ] 4.2k :: [[file:autostart-0.7.patch]]
 - [ ] 5.0k :: [[file:modes.patch]]
