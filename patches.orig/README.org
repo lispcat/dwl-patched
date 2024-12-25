@@ -12,7 +12,7 @@
 - [X] 2.7k :: [[file:movestack.patch]]
 - [X] 2.7k :: [[file:passthrough.patch]]
 - [X] 2.9k :: [[file:deck.patch]]
-- [ ] 3.0k :: [[file:rotatetags.patch]]
+- [X] 3.0k :: [[file:rotatetags.patch]]
 - [ ] 4.2k :: [[file:autostart-0.7.patch]]
 - [ ] 5.0k :: [[file:modes.patch]]
 - [ ] 5.4k :: [[file:pointer-gestures-unstable-v1.patch]]
