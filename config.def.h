@@ -27,6 +27,13 @@ enum {
 /* logging */
 static int log_level = WLR_ERROR;
 
+/* Autostart */
+static const char *const autostart[] = {
+        "wbg", "/path/to/your/image", NULL,
+        NULL /* terminate */
+};
+
+
 /* passthrough */
 static int passthrough = 0;
 
