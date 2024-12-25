@@ -6,10 +6,10 @@
 
 * Patches (order)
 
-- [ ] 2.0k :: [[file:warpcursor.patch]]
-- [ ] 2.6k :: [[file:numlock-capslock-0.7.patch]]
-- [ ] 2.6k :: [[file:shiftview.patch]]
-- [ ] 2.7k :: [[file:movestack.patch]]
+- [X] 2.0k :: [[file:warpcursor.patch]]
+- [X] 2.6k :: [[file:numlock-capslock-0.7.patch]]
+- [X] 2.6k :: [[file:shiftview.patch]]
+- [X] 2.7k :: [[file:movestack.patch]]
 - [ ] 2.7k :: [[file:passthrough.patch]]
 - [ ] 2.9k :: [[file:deck.patch]]
 - [ ] 3.0k :: [[file:rotatetags.patch]]
