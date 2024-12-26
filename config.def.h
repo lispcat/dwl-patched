@@ -19,13 +19,6 @@ static const char  kblayout_file[] = "/tmp/dwl-keymap";
 static const char *kblayout_cmd[]  = {"pkill", "-RTMIN+3", "someblocks", NULL};
 
 enum {
-	BROWSER,
-};
-const char *modes_labels[] = {
-	"browser",
-};
-
-enum {
     VIEW_L = -1,
     VIEW_R = 1,
     SHIFT_L = -2,
@@ -208,8 +201,6 @@ static const Key keys[] = {
 	{ WLR_MODIFIER_ALT|WLR_MODIFIER_LOGO|WLR_MODIFIER_CTRL|WLR_MODIFIER_SHIFT, XKB_KEY_Escape, togglepassthrough, {0} },
 	{ MODKEY|WLR_MODIFIER_SHIFT, XKB_KEY_Q,          quit,           {0} },
 	
-	{ MODKEY,                    XKB_KEY_b,          entermode,      {.i = BROWSER} },
-
 	/* Ctrl-Alt-Backspace and Ctrl-Alt-Fx used to be handled by X server */
 	{ WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_Terminate_Server, quit, {0} },
 	/* Ctrl-Alt-Fx is used to switch to another VT, if you don't know what a VT is
@@ -218,17 +209,6 @@ static const Key keys[] = {
 #define CHVT(n) { WLR_MODIFIER_CTRL|WLR_MODIFIER_ALT,XKB_KEY_XF86Switch_VT_##n, chvt, {.ui = (n)} }
 	CHVT(1), CHVT(2), CHVT(3), CHVT(4), CHVT(5), CHVT(6),
 	CHVT(7), CHVT(8), CHVT(9), CHVT(10), CHVT(11), CHVT(12),
-};
-
-static const Modekey modekeys[] = {
-	/* mode      modifier                  key                 function        argument */
-	{ BROWSER, { 0, XKB_KEY_f, spawn, SHCMD("firefox") } },
-	{ BROWSER, { 0, XKB_KEY_f, entermode, {.i = NORMAL} } },
-	{ BROWSER, { 0, XKB_KEY_b, spawn, SHCMD("brave") } },
-	{ BROWSER, { 0, XKB_KEY_b, entermode, {.i = NORMAL} } },
-	{ BROWSER, { 0, XKB_KEY_g, spawn, SHCMD("google-chrome-stable") } },
-	{ BROWSER, { 0, XKB_KEY_g, entermode, {.i = NORMAL} } },
-	{ BROWSER, { 0, XKB_KEY_Escape, entermode, {.i = NORMAL} } },
 };
 
 static const Button buttons[] = {

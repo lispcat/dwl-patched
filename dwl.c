@@ -164,11 +164,6 @@ typedef struct {
 } Key;
 
 typedef struct {
-	int mode_index;
-	Key key;
-} Modekey;
-
-typedef struct {
 	struct wl_list link;
 	struct wlr_keyboard_group *wlr_group;
 
@@ -330,7 +325,6 @@ static void inputdevice(struct wl_listener *listener, void *data);
 static void kblayout(KeyboardGroup *kb);
 static void switchxkbrule(const Arg *arg);
 static int keybinding(uint32_t mods, xkb_keysym_t sym);
-static int modekeybinding(uint32_t mods, xkb_keysym_t sym);
 static void keypress(struct wl_listener *listener, void *data);
 static void keypressmod(struct wl_listener *listener, void *data);
 static int keyrepeat(void *data);
@@ -404,7 +398,6 @@ static void factivatenotify(struct wl_listener *listener, void *data);
 static void fclosenotify(struct wl_listener *listener, void *data);
 static void fdestroynotify(struct wl_listener *listener, void *data);
 static void ffullscreennotify(struct wl_listener *listener, void *data);
-static void entermode(const Arg *arg);
 static void rotatetags(const Arg *arg);
 
 /* variables */
@@ -476,9 +469,6 @@ static struct wl_list mons;
 static Monitor *selmon;
 
 static unsigned int kblayout_idx = -1;
-
-static const int NORMAL = -1;
-static int active_mode_index = NORMAL;
 
 #ifdef XWAYLAND
 static void activatex11(struct wl_listener *listener, void *data);
@@ -1998,11 +1988,6 @@ keybinding(uint32_t mods, xkb_keysym_t sym)
 	 * processing.
 	 */
 	const Key *k;
-
-	if (active_mode_index >= 0) {
-		return modekeybinding(mods, sym);
-	}
-
 	for (k = keys; k < END(keys); k++) {
 		if (CLEANMASK(mods) == CLEANMASK(k->mod) &&
 				sym == k->keysym && k->func) {
@@ -2013,29 +1998,6 @@ keybinding(uint32_t mods, xkb_keysym_t sym)
 		}
 	}
 	return 0;
-}
-
-int
-modekeybinding(uint32_t mods, xkb_keysym_t sym)
-{
-	int handled = 0;
-	const Modekey *mk;
-	const Key *k;
-
-	for (mk = modekeys; mk < END(modekeys); mk++) {
-		if (active_mode_index != mk->mode_index) {
-			continue;
-		}
-
-		k = &mk->key;
-		if (CLEANMASK(mods) == CLEANMASK(k->mod) &&
-				sym == k->keysym && k->func) {
-			k->func(&k->arg);
-			handled = 1;
-		}
-	}
-
-	return handled;
 }
 
 void
@@ -2571,8 +2533,7 @@ printstatus(void)
 		printf("%s selmon %u\n", m->wlr_output->name, m == selmon);
 		printf("%s tags %"PRIu32" %"PRIu32" %"PRIu32" %"PRIu32"\n",
 			m->wlr_output->name, occ, m->tagset[m->seltags], sel, urg);
-		printf("%s layout %s\n", m->wlr_output->name, m->ltsymbol);
-		printf("%s mode %s\n", m->wlr_output->name, modes_labels[active_mode_index] ? modes_labels[active_mode_index] : "");	}
+		printf("%s layout %s\n", m->wlr_output->name, m->ltsymbol); }
 	fflush(stdout);
 }
 
@@ -3861,13 +3822,6 @@ zoom(const Arg *arg)
 
 	focusclient(sel, 1);
 	arrange(selmon);
-}
-
-void
-entermode(const Arg *arg)
-{
-	active_mode_index = arg->i;
-	printstatus();
 }
 
 static void
