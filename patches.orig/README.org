@@ -19,4 +19,4 @@
 - [X] 5.6k :: [[file:pertag.patch]]
 - [X] 5.8k :: [[file:xkb-switch-wip.patch]]
 - [X] 13.0k :: [[file:tablet-input.patch]]
-- [ ] 20.0k :: [[file:foreign-toplevel-management.patch]]
+- [X] 20.0k :: [[file:foreign-toplevel-management.patch]]
