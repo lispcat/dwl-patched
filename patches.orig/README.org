@@ -14,7 +14,7 @@
 - [X] 2.9k :: [[file:deck.patch]]
 - [X] 3.0k :: [[file:rotatetags.patch]]
 - [X] 4.2k :: [[file:autostart-0.7.patch]]
-- [ ] 5.0k :: [[file:modes.patch]]
+- [X] 5.0k :: [[file:modes.patch]]
 - [ ] 5.4k :: [[file:pointer-gestures-unstable-v1.patch]]
 - [ ] 5.6k :: [[file:pertag.patch]]
 - [ ] 5.8k :: [[file:xkb-switch-wip.patch]]
