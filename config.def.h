@@ -163,6 +163,7 @@ static const enum libinput_config_tap_button_map button_map = LIBINPUT_CONFIG_TA
 /* commands */
 static const char *termcmd[] = { "alacritty", NULL };
 static const char *menucmd[] = { "bemenu-run", NULL };
+static const char *whichkeycmd[] = { "wlr-which-key", NULL };
 static const char *emacsclient[] = { "emacsclient", "-c", "-a", "", NULL };
 // xf86 cmds
 static const char *volmute[] = { "amixer", "set", "Master", "toggle", NULL };
@@ -197,6 +198,7 @@ static const Key keys[] = {
 	/* spawning */
 	{ MODKEY,                    XKB_KEY_l,          spawn,          {.v = menucmd} },
 	{ MODKEY,                    XKB_KEY_b,          spawn,          {.v = termcmd} },
+	{ MODKEY,                    XKB_KEY_g,          spawn,          {.v = whichkeycmd} },
 	{ MODKEY,                    XKB_KEY_m,          spawn,          {.v = emacsclient} },
 
 	/* stack */
