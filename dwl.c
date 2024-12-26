@@ -15,6 +15,7 @@
 #include <wlr/backend.h>
 #include <wlr/backend/libinput.h>
 #include <wlr/interfaces/wlr_keyboard.h>
+#include <wlr/interfaces/wlr_keyboard.h>
 #include <wlr/render/allocator.h>
 #include <wlr/render/wlr_renderer.h>
 #include <wlr/types/wlr_alpha_modifier_v1.h>
@@ -313,6 +314,8 @@ static void gpureset(struct wl_listener *listener, void *data);
 static void handlesig(int signo);
 static void incnmaster(const Arg *arg);
 static void inputdevice(struct wl_listener *listener, void *data);
+static void kblayout(KeyboardGroup *kb);
+static void switchxkbrule(const Arg *arg);
 static int keybinding(uint32_t mods, xkb_keysym_t sym);
 static int modekeybinding(uint32_t mods, xkb_keysym_t sym);
 static void keypress(struct wl_listener *listener, void *data);
@@ -439,6 +442,8 @@ static struct wlr_output_layout *output_layout;
 static struct wlr_box sgeom;
 static struct wl_list mons;
 static Monitor *selmon;
+
+static unsigned int kblayout_idx = -1;
 
 static const int NORMAL = -1;
 static int active_mode_index = NORMAL;
@@ -1076,6 +1081,8 @@ createkeyboard(struct wlr_keyboard *keyboard)
 
 	/* Add the new keyboard to the group */
 	wlr_keyboard_group_add_keyboard(kb_group->wlr_group, keyboard);
+
+	kblayout(kb_group);
 }
 
 KeyboardGroup *
@@ -1830,6 +1837,68 @@ inputdevice(struct wl_listener *listener, void *data)
 	wlr_seat_set_capabilities(seat, caps);
 }
 
+void
+kblayout(KeyboardGroup *kb)
+{
+	FILE *f;
+	unsigned int idx = kb->wlr_group->keyboard.modifiers.group;
+
+	// If layout did not change, do nothing
+	if (kblayout_idx == idx)
+		return;
+	kblayout_idx = idx;
+
+	// Save current layout to kblayout_file
+	if (*kblayout_file && (f = fopen(kblayout_file, "w"))) {
+		fputs(xkb_keymap_layout_get_name(kb->wlr_group->keyboard.keymap,
+				idx), f);
+		fclose(f);
+	}
+
+	// Run kblayout_cmd
+	if (kblayout_cmd[0] && fork() == 0) {
+		execvp(kblayout_cmd[0], (char *const *)kblayout_cmd);
+		die("dwl: execvp %s failed:", kblayout_cmd[0]);
+	}
+}
+
+void
+switchxkbrule(const Arg *arg)
+{
+	/*
+	 * Switch keyboard layout/group by index with arg->i.
+	 * If arg->i == -1, then switch to the next layout.
+	 */
+	struct wlr_keyboard *kb = wlr_seat_get_keyboard(seat);
+	struct wlr_keyboard_group *group = kb ? wlr_keyboard_group_from_wlr_keyboard(kb) : NULL;
+
+	/* Copied from wlroots/types/wlr_keyboard_group.c */
+	struct keyboard_group_device {
+		struct wlr_keyboard *keyboard;
+		struct wl_listener key;
+		struct wl_listener modifiers;
+		struct wl_listener keymap;
+		struct wl_listener repeat_info;
+		struct wl_listener destroy;
+		struct wl_list link; // wlr_keyboard_group.devices
+	};
+	struct keyboard_group_device *device;
+	int cur_idx, target_idx;
+
+	if (group) {
+		cur_idx = group->keyboard.modifiers.group;
+		target_idx = (arg->i == -1) ? (++cur_idx % xkb_num_layouts) : arg->i;
+
+		device = wl_container_of(group->devices.next, device, link);
+		wlr_keyboard_notify_modifiers(device->keyboard,
+					      device->keyboard->modifiers.depressed,
+					      device->keyboard->modifiers.latched,
+					      device->keyboard->modifiers.locked,
+					      target_idx
+		);
+	}
+}
+
 int
 keybinding(uint32_t mods, xkb_keysym_t sym)
 {
@@ -1937,6 +2006,8 @@ keypressmod(struct wl_listener *listener, void *data)
 	/* Send modifiers to the client. */
 	wlr_seat_keyboard_notify_modifiers(seat,
 			&group->wlr_group->keyboard.modifiers);
+
+	kblayout(group);
 }
 
 int
@@ -2589,6 +2660,9 @@ run(char *startup_cmd)
 	 * nor consumes it in their startup script getting dwl frozen */
 	if (fd_set_nonblock(STDOUT_FILENO) < 0)
 		close(STDOUT_FILENO);
+
+	/* Set the initial kbd layout */
+	switchxkbrule(&(Arg){ .i = xkb_init_layout });
 
 	printstatus();
 

@@ -17,6 +17,6 @@
 - [X] 5.0k :: [[file:modes.patch]]
 - [X] 5.4k :: [[file:pointer-gestures-unstable-v1.patch]]
 - [X] 5.6k :: [[file:pertag.patch]]
-- [ ] 5.8k :: [[file:xkb-switch-wip.patch]]
+- [X] 5.8k :: [[file:xkb-switch-wip.patch]]
 - [ ] 13.0k :: [[file:tablet-input.patch]]
 - [ ] 20.0k :: [[file:foreign-toplevel-management.patch]]
